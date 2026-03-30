@@ -8,8 +8,11 @@ const { promisify } = util
 const typeFileExt = '.d.ts'
 const localeDir = path.join(process.env.PWD, 'esm/locale')
 const pluginDir = path.join(process.env.PWD, 'esm/plugin')
-const localeTypePath = path.join(process.env.PWD, 'esm/locale', `index${typeFileExt}`);
-
+const localeTypePath = path.join(
+  process.env.PWD,
+  'esm/locale',
+  `index${typeFileExt}`
+);
 (async () => {
   try {
     const readLocaleDir = await promisify(fs.readdir)(localeDir)
@@ -23,7 +26,7 @@ const localeTypePath = path.join(process.env.PWD, 'esm/locale', `index${typeFile
     await promisify(ncp)('./types/', './esm')
 
     const readLocaleFile = await promisify(fs.readFile)(localeTypePath, 'utf8')
-    const localResult = readLocaleFile.replace("'dayjs", "'dayjs/esm")
+    const localResult = readLocaleFile.replace(/'dayjs"/g, "'dayjs/esm'")
     await promisify(fs.writeFile)(localeTypePath, localResult, 'utf8')
 
     const readPluginDir = await promisify(fs.readdir)(pluginDir)
@@ -31,7 +34,11 @@ const localeTypePath = path.join(process.env.PWD, 'esm/locale', `index${typeFile
       if (p.includes(typeFileExt)) {
         const pluginName = p.replace(typeFileExt, '')
         const filePath = path.join(pluginDir, p)
-        const targetPath = path.join(pluginDir, pluginName, `index${typeFileExt}`)
+        const targetPath = path.join(
+          pluginDir,
+          pluginName,
+          `index${typeFileExt}`
+        )
         const readFile = await promisify(fs.readFile)(filePath, 'utf8')
         const result = readFile.replace(/'dayjs'/g, "'dayjs/esm'")
         await promisify(fs.writeFile)(targetPath, result, 'utf8')

@@ -1,14 +1,14 @@
 const babel = require('rollup-plugin-babel')
 const { terser } = require('rollup-plugin-terser')
 
+const isESM = process.env.BABEL_ENV === 'esm'
+
 module.exports = (config) => {
   const { input, fileName, name } = config
   return {
     input: {
       input,
-      external: [
-        'dayjs'
-      ],
+      external: isESM ? [] : ['dayjs'],
       plugins: [
         babel({
           exclude: 'node_modules/**'
@@ -18,12 +18,15 @@ module.exports = (config) => {
     },
     output: {
       file: fileName,
-      format: 'umd',
+      format: isESM ? 'esm' : 'umd',
       name: name || 'dayjs',
-      globals: {
-        dayjs: 'dayjs'
-      },
-      compact: true
+      globals: isESM
+        ? undefined
+        : {
+          dayjs: 'dayjs'
+        },
+      compact: true,
+      preserveModules: isESM
     }
   }
 }

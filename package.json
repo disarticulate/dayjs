@@ -3,14 +3,16 @@
   "version": "0.0.0-development",
   "description": "2KB immutable date time library alternative to Moment.js with the same modern API ",
   "main": "dayjs.min.js",
+  "module": "esm/index.mjs",
   "types": "index.d.ts",
   "scripts": {
     "test": "TZ=Pacific/Auckland npm run test-tz && TZ=Europe/London npm run test-tz && TZ=America/Whitehorse npm run test-tz && npm run test-tz && jest --coverage --coverageThreshold='{ \"global\": { \"lines\": 100} }'",
     "test-tz": "date && jest test/timezone.test --coverage=false",
     "lint": "./node_modules/.bin/eslint src/* test/* build/*",
     "prettier": "prettier --write \"docs/**/*.md\"",
-    "babel": "cross-env BABEL_ENV=build babel src --out-dir esm --copy-files && node build/esm",
-    "build": "cross-env BABEL_ENV=build node build && npm run size",
+    "build:esm": "cross-env BABEL_ENV=esm babel src --out-dir esm --copy-files && node build/esm",
+    "build:umd": "cross-env BABEL_ENV=build node build",
+    "build": "npm run build:umd && npm run build:esm",
     "sauce": "npx karma start karma.sauce.conf.js",
     "test:sauce": "npm run sauce -- 0 && npm run sauce -- 1 && npm run sauce -- 2  && npm run sauce -- 3",
     "size": "size-limit && gzip-size dayjs.min.js"
@@ -22,6 +24,10 @@
     {
       "limit": "2.99 KB",
       "path": "dayjs.min.js"
+    },
+    {
+      "limit": "2.5 KB",
+      "path": "esm/index.mjs"
     }
   ],
   "jest": {
